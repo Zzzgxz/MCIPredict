@@ -6,16 +6,10 @@
 
 import numpy as np
 import pandas as pd
+import streamlit as st
+import joblib
 from sklearn.model_selection import StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import confusion_matrix, accuracy_score, recall_score, precision_score, roc_auc_score
-
-# Function to calculate sensitivity and specificity
-def sensitivity_specificity(conf_matrix):
-    tn, fp, fn, tp = conf_matrix.ravel()
-    sensitivity = tp / (tp + fn)  # Same as recall
-    specificity = tn / (tn + fp)
-    return sensitivity, specificity
 
 # Load data
 data_path = 'charsl2015Smote0723.csv'  # Replace with your data path
@@ -40,17 +34,6 @@ for train_index, test_index in kf.split(X, y):
 
     # Train the model
     model.fit(X_train, y_train)
-
-
-# In[2]:
-
-
-import warnings
-warnings.filterwarnings('ignore')
-
-
-# In[6]:
-
 
 # 创建一个标题
 st.title('MCI Prediction Model')
@@ -91,14 +74,6 @@ if st.button('Predict'):
     else:
         st.error('患MCI风险大')
 
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
 
 
 
