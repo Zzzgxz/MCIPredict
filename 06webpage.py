@@ -36,7 +36,7 @@ for train_index, test_index in kf.split(X, y):
     model.fit(X_train, y_train)
 
 # 创建一个标题
-st.title('MCI Prediction Model')
+st.title('MCI Screening Model')
 
 
 # In[7]:
