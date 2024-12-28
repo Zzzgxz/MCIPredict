@@ -63,27 +63,6 @@ warnings.filterwarnings('ignore')
 # In[2]:
 
 
-import joblib
-
-# 保存模型
-joblib.dump(rf_classifier, 'random_forest_model.joblib')
-
-
-# In[11]:
-
-
-import streamlit as st
-import pandas as pd
-import numpy as np
-import joblib
-
-
-# In[12]:
-
-
-model = joblib.load('random_forest_model.joblib')
-
-
 # In[18]:
 
 
