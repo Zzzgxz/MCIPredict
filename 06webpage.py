@@ -42,7 +42,7 @@ for train_index, test_index in kf.split(X, y):
     model.fit(X_train, y_train)
 
 
-# In[4]:
+# In[14]:
 
 
 import shap
@@ -52,6 +52,7 @@ explainer = shap.TreeExplainer(model)
 
 # Streamlit Web 页面
 st.title('MCI Prediction and Explanation Dashboard')
+shap.initjs()  # 必须手动初始化 JS
 
 
 # In[5]:
