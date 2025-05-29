@@ -115,9 +115,10 @@ if st.button('Predict'):
         feature_row = input_df.iloc[0]
 
         import matplotlib.pyplot as plt
-        fig = plt.figure()
+
+         # 直接绘制，不新建 fig，让 SHAP 自动渲染当前 canvas
         shap.force_plot(expected_value, sv, feature_row, matplotlib=True, show=False)
-        st.pyplot(fig)
+        st.pyplot(bbox_inches='tight', pad_inches=0)
 
     except Exception as e:
         st.error("❌ SHAP force plot 生成失败:")
