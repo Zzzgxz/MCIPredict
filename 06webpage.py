@@ -115,9 +115,12 @@ if st.button('Predict'):
         expected_value = explainer.expected_value[1]
         feature_row = input_df.iloc[0]
 
-        fig, ax = plt.subplots()  # ✅ 创建显式 fig
+        # ✅ 直接让 SHAP 绘制在全局 figure 上
         shap.force_plot(expected_value, sv, feature_row, matplotlib=True, show=False)
-        st.pyplot(fig)            # ✅ 显式传入 fig，未来版本更安全
+    
+        # ✅ 获取当前图形（shap 画的那张）交给 Streamlit 显示
+        fig = plt.gcf()
+        st.pyplot(fig)
 
     except Exception as e:
         st.error("❌ SHAP force plot 生成失败:")
