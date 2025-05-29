@@ -85,12 +85,12 @@ education = st.selectbox('Education Level', list(education_options.keys()))
 # 将描述映射回数字
 education_value = education_options[education]
 
-gs = st.number_input('Grip Strength (KG)', min_value=0.0, max_value=100.0, value=30.0)
-height = st.number_input('Height (cm)', min_value=100.0, max_value=250.0, value=170.0)
-weight = st.number_input('Weight (kg)', min_value=30.0, max_value=200.0, value=70.0)
-cre = st.number_input('Creatinine Level (mg/dl)', min_value=0.0, max_value=15.0, value=1.0)
-mcv = st.number_input('Mean Corpuscular Volume (fL)', min_value=50.0, max_value=150.0, value=90.0)
-plt = st.number_input('Platelet Count (10^9/L)', min_value=1, max_value=500000, step=10000, value=250000)
+gs = st.number_input('Grip Strength (KG)', 0.0, 100.0, 30.0)
+height = st.number_input('Height (cm)', 100.0, 250.0, 170.0)
+weight = st.number_input('Weight (kg)', 30.0, 200.0, 70.0)
+cre = st.number_input('Creatinine (mg/dl)', 0.0, 15.0, 1.0)
+plt_count = st.number_input('Platelet Count (10^9/L)', 1, 500000, 250000, step=10000)
+mcv = st.number_input('Mean Corpuscular Volume (fL)', 50.0, 150.0, 90.0)
 
 
 # In[13]:
