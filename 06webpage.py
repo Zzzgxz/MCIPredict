@@ -115,7 +115,7 @@ if st.button('Predict'):
         feature_row = input_df.iloc[0]
 
         from streamlit.components.v1 import html
-        force_plot_obj = shap.plots.force(
+        force_plot_html = shap.plots.force(
             expected_value,
             sv,
             feature_row,
