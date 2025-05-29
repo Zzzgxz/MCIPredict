@@ -122,7 +122,7 @@ if st.button('Predict'):
             matplotlib=False
         ).html()
         html(shap.getjs(), height=0)
-        html(force_plot_obj.html(), height=300)
+        html(force_plot_html, height=300)  # ✅ 只嵌入纯 HTML 字符串
     except Exception as e:
         st.error("❌ SHAP force plot 生成失败:")
         st.write(str(e))
