@@ -112,15 +112,24 @@ if st.button('Predict'):
     shap_values = explainer.shap_values(input_df)
 
     st.subheader("SHAP Force Plot: Explanation for This Prediction")
+    
+        # 判断 shap_values 是列表还是直接是一个 array（推荐方式）
+    if isinstance(shap_values, list) and len(shap_values) == 2:
+        # 二分类时，shap 返回两个 class 的 SHAP 值，使用正类（class=1）
+        sv = shap_values[1][0]
+        expected_value = explainer.expected_value[1]
+    else:
+        # shap_values 直接就是 [n_samples, n_features]
+        sv = shap_values[0]  # 第一个样本
+        expected_value = explainer.expected_value
 
-    # 显示force plot
     shap_html = shap.plots.force(
-        explainer.expected_value[1],
-        shap_values[1][0],
-        input_df,
-        matplotlib=False,
-        show=False
-    )
+    expected_value,
+    sv,
+    input_df,
+    matplotlib=False,
+    show=False)
+
 
     from streamlit.components.v1 import html
     html(shap.getjs(), height=0)
