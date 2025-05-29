@@ -114,11 +114,9 @@ if st.button('Predict'):
         expected_value = explainer.expected_value[1]
         feature_row = input_df.iloc[0]
 
-        import matplotlib.pyplot as plt
-
-         # 直接绘制，不新建 fig，让 SHAP 自动渲染当前 canvas
+        fig, ax = plt.subplots()  # ✅ 创建显式 fig
         shap.force_plot(expected_value, sv, feature_row, matplotlib=True, show=False)
-        st.pyplot(bbox_inches='tight', pad_inches=0)
+        st.pyplot(fig)            # ✅ 显式传入 fig，未来版本更安全
 
     except Exception as e:
         st.error("❌ SHAP force plot 生成失败:")
