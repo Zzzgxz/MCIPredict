@@ -107,6 +107,7 @@ if st.button('Predict'):
         st.error('⚠️ 患 MCI 的风险较高')
 
     st.subheader("🔍 SHAP Force Plot: Explanation for This Prediction")
+    
     try:
         shap_values = explainer.shap_values(input_df)
         sv = shap_values[0, :, 1]
@@ -119,7 +120,7 @@ if st.button('Predict'):
             sv,
             feature_row,
             matplotlib=False
-        )
+        ).html()
         html(shap.getjs(), height=0)
         html(force_plot_obj.html(), height=300)
     except Exception as e:
