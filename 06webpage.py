@@ -93,32 +93,37 @@ mcv = st.number_input('Mean Corpuscular Volume (fL)', min_value=50.0, max_value=
 plt = st.number_input('Platelet Count (10^9/L)', min_value=1, max_value=500000, step=10000, value=250000)
 
 
-# In[8]:
+# In[9]:
+
 
 
 # 按钮进行预测
 if st.button('Predict'):
-    features = np.array([[education_value, gs, height, weight, cre, mcv, plt]])
-    prediction = model.predict(features)
+    input_data = np.array([[education_value, gs, height, weight, cre, plt, mcv]])  # 不要用 features 命名
+    prediction = model.predict(input_data)
+    
     if prediction[0] == 0:
         st.success('患MCI风险小')
     else:
         st.error('患MCI风险大')
         
-     # SHAP解释
-    shap_values = explainer.shap_values(pd.DataFrame(input_data, columns=features))
+    # SHAP解释
+    input_df = pd.DataFrame(input_data, columns=features)  # 用原始特征名列表
+    shap_values = explainer.shap_values(input_df)
+
     st.subheader("SHAP Force Plot: Explanation for This Prediction")
 
     # 显示force plot
     shap_html = shap.plots.force(
         explainer.expected_value[1],
-        shap_values[1][0, :],
-        pd.DataFrame(input_data, columns=features),
+        shap_values[1][0],
+        input_df,
         matplotlib=False,
         show=False
     )
+
     from streamlit.components.v1 import html
-    html(shap.getjs(), height=0)  # 插入shap.js库
+    html(shap.getjs(), height=0)
     html(shap_html.html(), height=300)
 
 
