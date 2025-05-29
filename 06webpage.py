@@ -123,17 +123,18 @@ if st.button('Predict'):
         sv = shap_values[0]  # 第一个样本
         expected_value = explainer.expected_value
 
-    shap_html = shap.plots.force(
-    expected_value,
-    sv,
-    input_df,
-    matplotlib=False,
-    show=False)
+        # 使用 shap.force_plot 而不是 shap.plots.force
+    force_plot_html = shap.force_plot(
+        expected_value,
+        sv,
+        input_df,
+        show=False
+    )
 
-
+    # 在 Streamlit 中嵌入 HTML force plot
     from streamlit.components.v1 import html
-    html(shap.getjs(), height=0)
-    html(shap_html.html(), height=300)
+    html(shap.getjs(), height=0)  # 加载 SHAP 的 JS 脚本
+    html(force_plot_html.html(), height=300)
 
 
 # In[ ]:
