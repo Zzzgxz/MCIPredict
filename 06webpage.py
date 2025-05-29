@@ -18,7 +18,7 @@ def sensitivity_specificity(conf_matrix):
     return sensitivity, specificity
 
 # Load data
-data_path = './data/charsl2015Smote0723.csv'  # Replace with your data path
+data_path = 'charsl2015Smote0723.csv'  # Replace with your data path
 data = pd.read_csv(data_path)
 
 # Select features and target
