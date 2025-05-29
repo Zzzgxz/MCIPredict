@@ -6,13 +6,19 @@
 
 import numpy as np
 import pandas as pd
-import streamlit as st
-import joblib
 from sklearn.model_selection import StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix, accuracy_score, recall_score, precision_score, roc_auc_score
+
+# Function to calculate sensitivity and specificity
+def sensitivity_specificity(conf_matrix):
+    tn, fp, fn, tp = conf_matrix.ravel()
+    sensitivity = tp / (tp + fn)  # Same as recall
+    specificity = tn / (tn + fp)
+    return sensitivity, specificity
 
 # Load data
-data_path = 'charsl2015Smote0723.csv'  # Replace with your data path
+data_path = './data/charsl2015Smote0723.csv'  # Replace with your data path
 data = pd.read_csv(data_path)
 
 # Select features and target
@@ -35,8 +41,33 @@ for train_index, test_index in kf.split(X, y):
     # Train the model
     model.fit(X_train, y_train)
 
-# 创建一个标题
-st.title('MCI Screening Model')
+
+# In[4]:
+
+
+import shap
+import streamlit as st
+# SHAP解释器初始化
+explainer = shap.TreeExplainer(model)
+
+# Streamlit Web 页面
+st.title('MCI Prediction and Explanation Dashboard')
+
+
+# In[5]:
+
+
+import warnings
+warnings.filterwarnings('ignore')
+
+
+# In[6]:
+
+
+import streamlit as st
+import pandas as pd
+import numpy as np
+import joblib
 
 
 # In[7]:
@@ -73,7 +104,31 @@ if st.button('Predict'):
         st.success('患MCI风险小')
     else:
         st.error('患MCI风险大')
+        
+     # SHAP解释
+    shap_values = explainer.shap_values(pd.DataFrame(input_data, columns=features))
+    st.subheader("SHAP Force Plot: Explanation for This Prediction")
 
+    # 显示force plot
+    shap_html = shap.plots.force(
+        explainer.expected_value[1],
+        shap_values[1][0, :],
+        pd.DataFrame(input_data, columns=features),
+        matplotlib=False,
+        show=False
+    )
+    from streamlit.components.v1 import html
+    html(shap.getjs(), height=0)  # 插入shap.js库
+    html(shap_html.html(), height=300)
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
 
 
 
