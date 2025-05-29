@@ -114,26 +114,26 @@ if st.button('Predict'):
     st.subheader("SHAP Force Plot: Explanation for This Prediction")
 
     try:
-    # 确保 shap_values 为 (1, 7, 2)，提取正类的 SHAP 值
-    sv = shap_values[0, :, 1]  # 第一个样本、class=1
-    expected_value = explainer.expected_value[1]
-    feature_row = input_df.iloc[0]  # 单行 Series
+        # 确保 shap_values 为 (1, 7, 2)，提取正类的 SHAP 值
+        sv = shap_values[0, :, 1]  # 第一个样本、class=1
+        expected_value = explainer.expected_value[1]
+        feature_row = input_df.iloc[0]  # 单行 Series
 
-    # Debug 输出可选
-    st.write("✅ SHAP array shape:", sv.shape)
-    st.write("✅ Feature shape:", feature_row.shape)
-    st.write("✅ Expected value:", expected_value)
+        # Debug 输出可选
+        st.write("✅ SHAP array shape:", sv.shape)
+        st.write("✅ Feature shape:", feature_row.shape)
+        st.write("✅ Expected value:", expected_value)
 
-    # 生成 HTML force plot
-    from streamlit.components.v1 import html
-    force_plot_obj = shap.plots.force(
-        expected_value,
-        sv,
-        feature_row,
-        matplotlib=False  # HTML 模式
-    )
-    html(shap.getjs(), height=0)
-    html(force_plot_obj.html(), height=300)
+        # 生成 HTML force plot
+        from streamlit.components.v1 import html
+        force_plot_obj = shap.plots.force(
+            expected_value,
+            sv,
+            feature_row,
+            matplotlib=False  # HTML 模式
+        )
+        html(shap.getjs(), height=0)
+        html(force_plot_obj.html(), height=300)
 
     except Exception as e:
         st.error("❌ SHAP force plot 生成失败:")
