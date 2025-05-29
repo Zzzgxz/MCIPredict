@@ -114,16 +114,11 @@ if st.button('Predict'):
         expected_value = explainer.expected_value[1]
         feature_row = input_df.iloc[0]
 
-        from streamlit.components.v1 import html
-        force_plot_html = shap.plots.force(
-            expected_value,
-            sv,
-            feature_row,
-            matplotlib=False
-        ).html()
-        html(shap.getjs(), height=0)
-        html(force_plot_html, height=300)  # ✅ 只嵌入纯 HTML 字符串
-         _ = force_plot_html
+        import matplotlib.pyplot as plt
+        fig = plt.figure()
+        shap.force_plot(expected_value, sv, feature_row, matplotlib=True, show=False)
+        st.pyplot(fig)
+
     except Exception as e:
         st.error("❌ SHAP force plot 生成失败:")
         st.write(str(e))
