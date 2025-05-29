@@ -52,7 +52,6 @@ explainer = shap.TreeExplainer(model)
 
 # Streamlit Web 页面
 st.title('MCI Prediction and Explanation Dashboard')
-shap.initjs()  # 必须手动初始化 JS
 
 
 # In[5]:
@@ -97,42 +96,32 @@ plt = st.number_input('Platelet Count (10^9/L)', min_value=1, max_value=500000, 
 # In[13]:
 
 
-# 按钮进行预测
 if st.button('Predict'):
-    # 构建输入数据
-    input_data = np.array([[education_value, gs, height, weight, cre, plt, mcv]])
+    input_data = np.array([[education_value, gs, height, weight, cre, plt_count, mcv]])
     input_df = pd.DataFrame(input_data, columns=features)
 
-    # 模型预测
     prediction = model.predict(input_data)
     if prediction[0] == 0:
-        st.success('患MCI风险小')
+        st.success('✅ 患 MCI 的风险较低')
     else:
-        st.error('患MCI风险大')
+        st.error('⚠️ 患 MCI 的风险较高')
 
-    # 计算 SHAP 值
-    shap_values = explainer.shap_values(input_df)  # shape: [1, n_features, 2] 或类似
-    st.subheader("SHAP Force Plot: Explanation for This Prediction")
-
+    st.subheader("🔍 SHAP Force Plot: Explanation for This Prediction")
     try:
-        # 提取 class=1 的 SHAP 值
+        shap_values = explainer.shap_values(input_df)
         sv = shap_values[0, :, 1]
         expected_value = explainer.expected_value[1]
         feature_row = input_df.iloc[0]
 
-        # 生成 force plot 对象
+        from streamlit.components.v1 import html
         force_plot_obj = shap.plots.force(
             expected_value,
             sv,
             feature_row,
             matplotlib=False
         )
-
-        # 只用 html() 嵌入，不要写 st.write()！
-        from streamlit.components.v1 import html
         html(shap.getjs(), height=0)
         html(force_plot_obj.html(), height=300)
-
     except Exception as e:
         st.error("❌ SHAP force plot 生成失败:")
         st.write(str(e))
