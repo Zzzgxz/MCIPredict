@@ -114,23 +114,23 @@ if st.button('Predict'):
     st.subheader("SHAP Force Plot: Explanation for This Prediction")
 
     try:
-    # 提取 class=1 的 SHAP 值
-    sv = shap_values[0, :, 1]
-    expected_value = explainer.expected_value[1]
-    feature_row = input_df.iloc[0]
+        # 提取 class=1 的 SHAP 值
+        sv = shap_values[0, :, 1]
+        expected_value = explainer.expected_value[1]
+        feature_row = input_df.iloc[0]
 
-    # 生成 force plot 对象
-    force_plot_obj = shap.plots.force(
-        expected_value,
-        sv,
-        feature_row,
-        matplotlib=False
-    )
+        # 生成 force plot 对象
+        force_plot_obj = shap.plots.force(
+            expected_value,
+            sv,
+            feature_row,
+            matplotlib=False
+        )
 
-    # 只用 html() 嵌入，不要写 st.write()！
-    from streamlit.components.v1 import html
-    html(shap.getjs(), height=0)
-    html(force_plot_obj.html(), height=300)
+        # 只用 html() 嵌入，不要写 st.write()！
+        from streamlit.components.v1 import html
+        html(shap.getjs(), height=0)
+        html(force_plot_obj.html(), height=300)
 
     except Exception as e:
         st.error("❌ SHAP force plot 生成失败:")
