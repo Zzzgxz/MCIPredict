@@ -93,54 +93,52 @@ mcv = st.number_input('Mean Corpuscular Volume (fL)', min_value=50.0, max_value=
 plt = st.number_input('Platelet Count (10^9/L)', min_value=1, max_value=500000, step=10000, value=250000)
 
 
-# In[9]:
-
+# In[13]:
 
 
 # 按钮进行预测
 if st.button('Predict'):
-    input_data = np.array([[education_value, gs, height, weight, cre, plt, mcv]])  # 不要用 features 命名
+    # 构建输入数据
+    input_data = np.array([[education_value, gs, height, weight, cre, plt, mcv]])
+    input_df = pd.DataFrame(input_data, columns=features)
+
+    # 模型预测
     prediction = model.predict(input_data)
-    
     if prediction[0] == 0:
         st.success('患MCI风险小')
     else:
         st.error('患MCI风险大')
-        
-    # SHAP解释
-    input_df = pd.DataFrame(input_data, columns=features)  # 用原始特征名列表
-    shap_values = explainer.shap_values(input_df)
 
+    # 计算 SHAP 值
+    shap_values = explainer.shap_values(input_df)  # shape: [1, n_features, 2] 或类似
     st.subheader("SHAP Force Plot: Explanation for This Prediction")
-    
-        # 判断 shap_values 是列表还是直接是一个 array（推荐方式）
-    if isinstance(shap_values, list) and len(shap_values) == 2:
-        # 二分类时，shap 返回两个 class 的 SHAP 值，使用正类（class=1）
-        sv = shap_values[1][0]
-        expected_value = explainer.expected_value[1]
-    else:
-        # shap_values 直接就是 [n_samples, n_features]
-        sv = shap_values[0]  # 第一个样本
-        expected_value = explainer.expected_value
 
-        # 使用 shap.force_plot 而不是 shap.plots.force
-    force_plot_html = shap.force_plot(
-        expected_value,
-        sv,
-        input_df,
-        show=False
-    )
+    try:
+        # 兼容新版 SHAP：三维输出 → 提取第一个样本、类别=1 的 SHAP 值
+        if isinstance(shap_values, np.ndarray) and shap_values.ndim == 3:
+            sv = shap_values[0, :, 1]  # shape: [n_features, ]
+            expected_value = explainer.expected_value[1]
+        elif isinstance(shap_values, list) and len(shap_values) == 2:
+            sv = shap_values[1][0]
+            expected_value = explainer.expected_value[1]
+        else:
+            sv = shap_values[0]
+            expected_value = explainer.expected_value
 
-    # 在 Streamlit 中嵌入 HTML force plot
-    from streamlit.components.v1 import html
-    html(shap.getjs(), height=0)  # 加载 SHAP 的 JS 脚本
-    html(force_plot_html.html(), height=300)
+        # 使用新版 shap.plots.force (HTML可嵌入)
+        from streamlit.components.v1 import html
+        force_plot_html = shap.plots.force(
+            expected_value,
+            sv,
+            input_df.iloc[0],      # 传入一行 Series
+            matplotlib=False       # 生成 HTML 图
+        )
+        html(shap.getjs(), height=0)
+        html(force_plot_html.html(), height=300)
 
-
-# In[ ]:
-
-
-
+    except Exception as e:
+        st.error("❌ SHAP force plot 生成失败:")
+        st.write(str(e))
 
 
 # In[ ]:
